@@ -1,0 +1,980 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "AQUARIUS Connect",
+        "version": "1.0"
+    },
+    "host": "beswebtst2",
+    "basePath": "/AQConnect",
+    "schemes": ["https"],
+    "consumes": ["application/json"],
+    "produces": ["application/json"],
+    "paths": {
+        "/api/health": {
+            "get": {
+                "tags": ["api"],
+                "operationId": "GetHealthhealth_Get",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                },
+                "deprecated": false
+            },
+            "parameters": [{
+                    "$ref": "#/parameters/Accept"
+                }
+            ]
+        },
+        "/api/logout": {
+            "post": {
+                "tags": ["Authentication"],
+                "summary": "Logout",
+                "description": "Logout the current user.",
+                "operationId": "PostLogoutlogout_Post",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [{
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/PostLogout"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                },
+                "deprecated": false
+            },
+            "parameters": [{
+                    "$ref": "#/parameters/Accept"
+                }
+            ]
+        },
+        "/api/provisioning": {
+            "post": {
+                "tags": ["Provisioning"],
+                "summary": "Bulk Provisioning",
+                "description": "Provisions system in bulk with the posted objects.\n\nIf the posted object has the same identifier/name as an existing object of the same type with the same parent, the existing object will be updated with the new data. Otherwise, a new object will be created.\n\nWhere an object is updated with new children, existing children missing from the post data will not be deleted.",
+                "operationId": "PostProvisioningprovisioning_Post",
+                "consumes": ["application/x-www-form-urlencoded"],
+                "produces": ["application/json"],
+                "parameters": [{
+                        "name": "Locations",
+                        "in": "formData",
+                        "description": "Locations to create or update. Existing locations are identified by matching identifier or name.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/Location"
+                        },
+                        "collectionFormat": "multi",
+                        "required": false
+                    }, {
+                        "name": "Connectors",
+                        "in": "formData",
+                        "description": "Connectors to create or update. Existing connectors are identified by matching name, or name and location if single-location.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/Connector"
+                        },
+                        "collectionFormat": "multi",
+                        "required": false
+                    }, {
+                        "name": "Schedules",
+                        "in": "formData",
+                        "description": "Schedules to create or update. Existing schedules are identified by matching name.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/Schedule"
+                        },
+                        "collectionFormat": "multi",
+                        "required": false
+                    }, {
+                        "name": "ExtractionRuleProfiles",
+                        "in": "formData",
+                        "description": "Extraction rule profiles to create or update by driver. Existing rule profiles are identified by matching driver and name. Drivers must already be installed.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/RuleProfile"
+                        },
+                        "collectionFormat": "multi",
+                        "required": false
+                    }, {
+                        "name": "InboundConnectionRuleProfiles",
+                        "in": "formData",
+                        "description": "Inbound connection rule profiles to create or update by driver. Existing rule profiles are identified by matching driver and name. Drivers must already be installed.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/RuleProfile"
+                        },
+                        "collectionFormat": "multi",
+                        "required": false
+                    }, {
+                        "name": "ExportRuleProfiles",
+                        "in": "formData",
+                        "description": "Export rule profiles to create or update by driver. Existing rule profiles are identified by matching driver and name. Drivers must already be installed.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/RuleProfile"
+                        },
+                        "collectionFormat": "multi",
+                        "required": false
+                    }, {
+                        "name": "OutboundConnectionRuleProfiles",
+                        "in": "formData",
+                        "description": "Outbound connection rule profiles to create or update by driver. Existing rule profiles are identified by matching driver and name. Drivers must already be installed.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/RuleProfile"
+                        },
+                        "collectionFormat": "multi",
+                        "required": false
+                    }, {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/PostProvisioning"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/ProvisioningResponse"
+                        }
+                    }
+                },
+                "deprecated": false
+            },
+            "delete": {
+                "tags": ["Provisioning"],
+                "summary": "Bulk Restore",
+                "description": "Restores system in bulk to an empty state.\n\nAll provisioning objects will be removed, excluding installed drivers. Rule profiles will be restored to their initial default selection for each driver.\n\nThis is not reversible. Use of this method requires supplying a valid token from the provisioning token endpoint.",
+                "operationId": "DeleteProvisioningprovisioning_Delete",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [{
+                        "name": "Token",
+                        "in": "query",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/ProvisioningResponse"
+                        }
+                    }
+                },
+                "deprecated": false
+            },
+            "parameters": [{
+                    "$ref": "#/parameters/Accept"
+                }
+            ]
+        },
+        "/api/stats": {
+            "get": {
+                "tags": ["api"],
+                "operationId": "GetStatsstats_Get",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/GetStatsResponse"
+                        }
+                    }
+                },
+                "deprecated": false
+            },
+            "parameters": [{
+                    "$ref": "#/parameters/Accept"
+                }
+            ]
+        },
+        "/api/credentials/login": {
+            "post": {
+                "tags": ["Authentication"],
+                "summary": "Credentials Login",
+                "description": "Login using provided username and password.",
+                "operationId": "PostCredentialsLogincredentialslogin_Post",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [{
+                        "name": "UserName",
+                        "in": "query",
+                        "type": "string"
+                    }, {
+                        "name": "Password",
+                        "in": "query",
+                        "type": "string"
+                    }, {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/PostCredentialsLogin"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/PostCredentialsLoginResponse"
+                        }
+                    }
+                },
+                "deprecated": false
+            },
+            "parameters": [{
+                    "$ref": "#/parameters/Accept"
+                }
+            ]
+        },
+        "/api/health/db": {
+            "get": {
+                "tags": ["api"],
+                "operationId": "GetHealthDatabasehealthdb_Get",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                },
+                "deprecated": false
+            },
+            "parameters": [{
+                    "$ref": "#/parameters/Accept"
+                }
+            ]
+        },
+        "/api/provisioning/token": {
+            "get": {
+                "tags": ["Provisioning"],
+                "summary": "Provisioning Token",
+                "description": "Gets a token for use with then Token parameter on other provisioning methods.\n\nTokens have a limited lifespan and expire 5 minutes after creation.",
+                "operationId": "GetProvisioningTokenprovisioningtoken_Get",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/GetProvisioningTokenResponse"
+                        }
+                    }
+                },
+                "deprecated": false
+            },
+            "parameters": [{
+                    "$ref": "#/parameters/Accept"
+                }
+            ]
+        }
+    },
+    "definitions": {
+        "Object": {
+            "properties": {},
+            "description": "Object",
+            "type": "object"
+        },
+        "GetHealth": {
+            "title": "GetHealth",
+            "properties": {},
+            "description": "GetHealth",
+            "type": "object"
+        },
+        "PostLogout": {
+            "title": "PostLogout",
+            "properties": {},
+            "description": "PostLogout",
+            "type": "object"
+        },
+        "PostProvisioning": {
+            "title": "PostProvisioning",
+            "properties": {
+                "Locations": {
+                    "description": "Locations to create or update. Existing locations are identified by matching identifier or name.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Location"
+                    }
+                },
+                "Connectors": {
+                    "description": "Connectors to create or update. Existing connectors are identified by matching name, or name and location if single-location.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Connector"
+                    }
+                },
+                "Schedules": {
+                    "description": "Schedules to create or update. Existing schedules are identified by matching name.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Schedule"
+                    }
+                },
+                "ExtractionRuleProfiles": {
+                    "description": "Extraction rule profiles to create or update by driver. Existing rule profiles are identified by matching driver and name. Drivers must already be installed.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/RuleProfile"
+                    }
+                },
+                "InboundConnectionRuleProfiles": {
+                    "description": "Inbound connection rule profiles to create or update by driver. Existing rule profiles are identified by matching driver and name. Drivers must already be installed.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/RuleProfile"
+                    }
+                },
+                "OutboundConnectionRuleProfiles": {
+                    "description": "Outbound connection rule profiles to create or update by driver. Existing rule profiles are identified by matching driver and name. Drivers must already be installed.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/RuleProfile"
+                    }
+                },
+                "ExportRuleProfiles": {
+                    "description": "Export rule profiles to create or update by driver. Existing rule profiles are identified by matching driver and name. Drivers must already be installed.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/RuleProfile"
+                    }
+                }
+            },
+            "description": "PostProvisioning",
+            "type": "object"
+        },
+        "Location": {
+            "title": "Location",
+            "properties": {
+                "Identifier": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "UtcOffset": {
+                    "type": "string",
+                    "x-nullable": false
+                }
+            },
+            "description": "Location",
+            "type": "object"
+        },
+        "Connector": {
+            "title": "Connector",
+            "properties": {
+                "Name": {
+                    "type": "string"
+                },
+                "Location": {
+                    "description": "Location, matched by identifier or name, associated with this connector and all data sets. This should be omitted if locations are specified at the data set level.",
+                    "type": "string"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "Enabled": {
+                    "type": "boolean"
+                },
+                "Schedules": {
+                    "description": "Schedules to associate with this connector. Existing schedule associations will be entirely replaced by those specified here.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "ExtractionRule": {
+                    "$ref": "#/definitions/ExtractionRule"
+                },
+                "InboundConnectionRule": {
+                    "$ref": "#/definitions/InboundConnectionRule"
+                },
+                "DataSets": {
+                    "description": "Data sets to create or update. Existing data sets associated with this connector and location are identified by matching identifier or name.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/DataSet"
+                    }
+                }
+            },
+            "description": "Connector",
+            "type": "object"
+        },
+        "ExtractionRule": {
+            "title": "ExtractionRule",
+            "properties": {
+                "Driver": {
+                    "description": "Specifying a driver name will default to the highest available version. An explicit version may be specified in trailing brackets.",
+                    "type": "string"
+                },
+                "RuleProfile": {
+                    "type": "string"
+                },
+                "SettingOverrides": {
+                    "$ref": "#/definitions/DynamicObject",
+                    "description": "Setting overrides for this rule. Unspecified settings will inherit from the rule profile."
+                }
+            },
+            "description": "Extraction rule to create. Any existing rule will be replaced.",
+            "type": "object"
+        },
+        "DynamicObject": {
+            "title": "DynamicObject",
+            "properties": {
+                "Count": {
+                    "type": "integer",
+                    "format": "int32",
+                    "x-nullable": false
+                },
+                "Item": {
+                    "$ref": "#/definitions/Object"
+                },
+                "Keys": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "Values": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Object"
+                    }
+                }
+            },
+            "description": "DynamicObject",
+            "type": "object"
+        },
+        "InboundConnectionRule": {
+            "title": "InboundConnectionRule",
+            "properties": {
+                "Driver": {
+                    "description": "Specifying a driver name will default to the highest available version. An explicit version may be specified in trailing brackets.",
+                    "type": "string"
+                },
+                "RuleProfile": {
+                    "type": "string"
+                },
+                "SettingOverrides": {
+                    "$ref": "#/definitions/DynamicObject",
+                    "description": "Setting overrides for this rule. Unspecified settings will inherit from the rule profile."
+                }
+            },
+            "description": "Inbound connection rule to create. Any existing rule will be replaced.",
+            "type": "object"
+        },
+        "DataSet": {
+            "title": "DataSet",
+            "properties": {
+                "Identifier": {
+                    "type": "string"
+                },
+                "Location": {
+                    "description": "Location, matched by identifier or name, associated with this data set. This is ignored if the location is specified at the connector level.",
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Enabled": {
+                    "type": "boolean"
+                },
+                "ExportTargets": {
+                    "description": "Export targets to create or update. Existing export targets associated with this data set are identified by matching name.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ExportTarget"
+                    }
+                }
+            },
+            "description": "DataSet",
+            "type": "object"
+        },
+        "ExportTarget": {
+            "title": "ExportTarget",
+            "properties": {
+                "Name": {
+                    "type": "string"
+                },
+                "Enabled": {
+                    "type": "boolean"
+                },
+                "ExportRule": {
+                    "$ref": "#/definitions/ExportRule"
+                },
+                "OutboundConnectionRule": {
+                    "$ref": "#/definitions/OutboundConnectionRule"
+                }
+            },
+            "description": "ExportTarget",
+            "type": "object"
+        },
+        "ExportRule": {
+            "title": "ExportRule",
+            "properties": {
+                "Driver": {
+                    "description": "Specifying a driver name will default to the highest available version. An explicit version may be specified in trailing brackets.",
+                    "type": "string"
+                },
+                "RuleProfile": {
+                    "type": "string"
+                },
+                "SettingOverrides": {
+                    "$ref": "#/definitions/DynamicObject",
+                    "description": "Setting overrides for this rule. Unspecified settings will inherit from the rule profile."
+                }
+            },
+            "description": "Export rule to create. Any existing rule will be replaced.",
+            "type": "object"
+        },
+        "OutboundConnectionRule": {
+            "title": "OutboundConnectionRule",
+            "properties": {
+                "Driver": {
+                    "description": "Specifying a driver name will default to the highest available version. An explicit version may be specified in trailing brackets.",
+                    "type": "string"
+                },
+                "RuleProfile": {
+                    "type": "string"
+                },
+                "SettingOverrides": {
+                    "$ref": "#/definitions/DynamicObject",
+                    "description": "Setting overrides for this rule. Unspecified settings will inherit from the rule profile."
+                }
+            },
+            "description": "Outbound connection rule to create. Any existing rule will be replaced.",
+            "type": "object"
+        },
+        "Schedule": {
+            "title": "Schedule",
+            "properties": {
+                "Name": {
+                    "type": "string"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "Enabled": {
+                    "type": "boolean"
+                },
+                "Triggers": {
+                    "description": "Triggers to create. Existing triggers will be entirely replaced by those specified here.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Trigger"
+                    }
+                }
+            },
+            "description": "Schedule",
+            "type": "object"
+        },
+        "Trigger": {
+            "title": "Trigger",
+            "properties": {
+                "Type": {
+                    "description": "Type of occurrence of this trigger. Options are:\n\nNever: Never occurs.\n\nOnce: Once, at the date and time specified by AtDateTime.\n\nDaily: Each day, starting at FromTimeOfDay, repeating every StepTimeOfDay, until ToTimeOfDay.\n\nWeekly: As daily, only on the days of the week specified by DaysOfWeek.\n\nMonthly: As weekly, only on the weeks of the month specified by WeeksOfMonth.",
+                    "type": "string",
+                    "enum": ["Never", "Once", "Daily", "Weekly", "Monthly"]
+                },
+                "UtcOffset": {
+                    "description": "The UtcOffset used when interpreting FromTimeOfDay and ToTimeOfDay.",
+                    "type": "string"
+                },
+                "AtDateTime": {
+                    "description": "The date and time of occurrence when Type is Once.",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "StepTimeOfDay": {
+                    "description": "The time span between occurrences within a day when Type is Daily, Weekly, or Monthly.",
+                    "type": "string"
+                },
+                "FromTimeOfDay": {
+                    "description": "The start of occurrences each day when Type is Daily, Weekly, or Monthly, interpreted with UtcOffset.",
+                    "type": "string"
+                },
+                "ToTimeOfDay": {
+                    "description": "The end of occurrences each day when Type is Daily, Weekly, or Monthly, interpreted with UtcOffset. Set to 23:59:00 to end at midnight.",
+                    "type": "string"
+                },
+                "DaysOfWeek": {
+                    "$ref": "#/definitions/DaysOfWeek"
+                },
+                "WeeksOfMonth": {
+                    "$ref": "#/definitions/WeeksOfMonth"
+                },
+                "Start": {
+                    "description": "The absolute date and time to start occurrence when Type is Daily, Weekly, or Monthly.",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "End": {
+                    "description": "The absolute date and time to end occurrence when Type is Daily, Weekly, or Monthly.",
+                    "type": "string",
+                    "format": "date-time"
+                }
+            },
+            "description": "Trigger",
+            "type": "object"
+        },
+        "DaysOfWeek": {
+            "title": "DaysOfWeek",
+            "properties": {
+                "Monday": {
+                    "type": "boolean",
+                    "x-nullable": false
+                },
+                "Tuesday": {
+                    "type": "boolean",
+                    "x-nullable": false
+                },
+                "Wednesday": {
+                    "type": "boolean",
+                    "x-nullable": false
+                },
+                "Thursday": {
+                    "type": "boolean",
+                    "x-nullable": false
+                },
+                "Friday": {
+                    "type": "boolean",
+                    "x-nullable": false
+                },
+                "Saturday": {
+                    "type": "boolean",
+                    "x-nullable": false
+                },
+                "Sunday": {
+                    "type": "boolean",
+                    "x-nullable": false
+                }
+            },
+            "description": "The occurrence by days of the week when Type is Weekly, or Monthly.",
+            "type": "object"
+        },
+        "WeeksOfMonth": {
+            "title": "WeeksOfMonth",
+            "properties": {
+                "First": {
+                    "type": "boolean",
+                    "x-nullable": false
+                },
+                "Second": {
+                    "type": "boolean",
+                    "x-nullable": false
+                },
+                "Third": {
+                    "type": "boolean",
+                    "x-nullable": false
+                },
+                "Fourth": {
+                    "type": "boolean",
+                    "x-nullable": false
+                },
+                "Last": {
+                    "type": "boolean",
+                    "x-nullable": false
+                }
+            },
+            "description": "The occurrence by weeks of the month when Type is Monthly.",
+            "type": "object"
+        },
+        "RuleProfile": {
+            "title": "RuleProfile",
+            "properties": {
+                "Driver": {
+                    "description": "Specifying a driver name will default to the highest available version. An explicit version may be specified in trailing brackets.",
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "Settings": {
+                    "$ref": "#/definitions/DynamicObject",
+                    "description": "Rule profile settings. Unspecified settings will take their values from the default rule profile."
+                },
+                "RuleCanOverride": {
+                    "$ref": "#/definitions/Dictionary_String_Boolean_",
+                    "description": "Whether rule profile settings may or may not be overridden by inheriting rules. Unspecified settings will take their override options from the default rule profile."
+                }
+            },
+            "description": "RuleProfile",
+            "type": "object"
+        },
+        "Dictionary_String_Boolean_": {
+            "title": "Dictionary<String,Boolean>",
+            "additionalProperties": {
+                "type": "boolean",
+                "x-nullable": false
+            },
+            "description": "Dictionary<String,Boolean>",
+            "type": "object"
+        },
+        "DeleteProvisioning": {
+            "title": "DeleteProvisioning",
+            "properties": {
+                "Token": {
+                    "type": "string"
+                }
+            },
+            "description": "DeleteProvisioning",
+            "type": "object"
+        },
+        "GetStats": {
+            "title": "GetStats",
+            "properties": {},
+            "description": "GetStats",
+            "type": "object"
+        },
+        "PostCredentialsLogin": {
+            "title": "PostCredentialsLogin",
+            "properties": {
+                "UserName": {
+                    "type": "string"
+                },
+                "Password": {
+                    "type": "string"
+                }
+            },
+            "description": "PostCredentialsLogin",
+            "type": "object"
+        },
+        "GetHealthDatabase": {
+            "title": "GetHealthDatabase",
+            "properties": {},
+            "description": "GetHealthDatabase",
+            "type": "object"
+        },
+        "GetProvisioningToken": {
+            "title": "GetProvisioningToken",
+            "properties": {},
+            "description": "GetProvisioningToken",
+            "type": "object"
+        },
+        "ProvisioningResponse": {
+            "title": "ProvisioningResponse",
+            "properties": {
+                "Messages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "Errors": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "ResponseStatus": {
+                    "$ref": "#/definitions/ResponseStatus"
+                }
+            },
+            "description": "ProvisioningResponse",
+            "type": "object"
+        },
+        "ResponseStatus": {
+            "title": "ResponseStatus",
+            "properties": {
+                "ErrorCode": {
+                    "type": "string"
+                },
+                "Message": {
+                    "type": "string"
+                },
+                "StackTrace": {
+                    "type": "string"
+                },
+                "Errors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ResponseError"
+                    }
+                },
+                "Meta": {
+                    "$ref": "#/definitions/Dictionary_String_String_"
+                }
+            },
+            "description": "ResponseStatus",
+            "type": "object"
+        },
+        "ResponseError": {
+            "title": "ResponseError",
+            "properties": {
+                "ErrorCode": {
+                    "type": "string"
+                },
+                "FieldName": {
+                    "type": "string"
+                },
+                "Message": {
+                    "type": "string"
+                },
+                "Meta": {
+                    "$ref": "#/definitions/Dictionary_String_String_"
+                }
+            },
+            "description": "ResponseError",
+            "type": "object"
+        },
+        "Dictionary_String_String_": {
+            "title": "Dictionary<String,String>",
+            "additionalProperties": {
+                "type": "string"
+            },
+            "description": "Dictionary<String,String>",
+            "type": "object"
+        },
+        "GetStatsResponse": {
+            "title": "GetStatsResponse",
+            "properties": {
+                "Timestamp": {
+                    "type": "string",
+                    "format": "date-time",
+                    "x-nullable": false
+                },
+                "FailedConnectors": {
+                    "type": "integer",
+                    "format": "int32",
+                    "x-nullable": false
+                },
+                "FailedExports": {
+                    "type": "integer",
+                    "format": "int32",
+                    "x-nullable": false
+                },
+                "BlockedJobs": {
+                    "type": "integer",
+                    "format": "int32",
+                    "x-nullable": false
+                },
+                "TimeOfLastExecutedConnector": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "TimeOfLastExecutedExport": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "ShowWarning": {
+                    "type": "boolean",
+                    "x-nullable": false
+                }
+            },
+            "description": "GetStatsResponse",
+            "type": "object"
+        },
+        "PostCredentialsLoginResponse": {
+            "title": "PostCredentialsLoginResponse",
+            "properties": {
+                "User": {
+                    "$ref": "#/definitions/User"
+                },
+                "ResponseStatus": {
+                    "$ref": "#/definitions/ResponseStatus"
+                }
+            },
+            "description": "PostCredentialsLoginResponse",
+            "type": "object"
+        },
+        "User": {
+            "title": "User",
+            "properties": {
+                "UserId": {
+                    "type": "integer",
+                    "format": "int32",
+                    "x-nullable": false
+                },
+                "UserName": {
+                    "type": "string"
+                },
+                "Email": {
+                    "type": "string"
+                },
+                "DisplayName": {
+                    "type": "string"
+                },
+                "Roles": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "Locked": {
+                    "type": "boolean",
+                    "x-nullable": false
+                },
+                "GoogleEmail": {
+                    "type": "string"
+                },
+                "ForcePasswordChange": {
+                    "type": "boolean",
+                    "x-nullable": false
+                }
+            },
+            "description": "User",
+            "type": "object"
+        },
+        "GetProvisioningTokenResponse": {
+            "title": "GetProvisioningTokenResponse",
+            "properties": {
+                "Token": {
+                    "type": "string"
+                },
+                "ResponseStatus": {
+                    "$ref": "#/definitions/ResponseStatus"
+                }
+            },
+            "description": "GetProvisioningTokenResponse",
+            "type": "object"
+        }
+    },
+    "parameters": {
+        "Accept": {
+            "name": "Accept",
+            "in": "header",
+            "description": "Accept Header",
+            "type": "string",
+            "required": true,
+            "enum": ["application/json"]
+        }
+    },
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    },
+    "tags": [{
+            "name": "api"
+        }, {
+            "name": "Authentication"
+        }, {
+            "name": "Provisioning"
+        }
+    ]
+}
